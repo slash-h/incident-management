@@ -15,6 +15,22 @@
       "skipFiles": [
         "<node_internals>/**"
       ]
+    },
+
+    {
+      "name": "fiori ui",
+      "request": "launch",
+      "type": "node",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "cds",
+      "args": [
+        "watch",
+        "--open ns.incidents/index.html?sap-ui-xx-viewCache=false",
+        "--livereload false"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     }
   ]
 }
