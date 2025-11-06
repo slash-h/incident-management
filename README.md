@@ -1,6 +1,6 @@
-# Getting Started
-
-Welcome to your new project.
+# SAP Learning Journey - Building side-by-side extensions on SAP BTP
+ 
+Tutorial at - https://learning.sap.com/learning-journeys/build-side-by-side-extensions-on-sap-btp
 
 It contains these folders and files, following our recommended project layout:
 
@@ -10,7 +10,7 @@ File or Folder | Purpose
 `db/` | your domain models and data go here
 `srv/` | your service models and code go here
 `package.json` | project metadata and configuration
-`readme.md` | this getting started guide
+`.cdsrc.json` | CDS configuration for auth and external service integration
 
 
 ## Next Steps
@@ -20,6 +20,4 @@ File or Folder | Purpose
 - Start adding content, for example, a [db/schema.cds](db/schema.cds).
 
 
-## Learn More
 
-Learn more at https://cap.cloud.sap/docs/get-started/.

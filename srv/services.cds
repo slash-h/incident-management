@@ -9,7 +9,7 @@ service ProcessorService {
 }
 
 annotate ProcessorService.Incidents with @odata.draft.enabled;
-
+annotate ProcessorService with @(requires: 'support');
 
 // Service used by Administrator
 service AdminService {
@@ -18,3 +18,5 @@ service AdminService {
   entity Customers as projection on my.Customers;
 
 }
+
+annotate AdminService with @(requires: 'admin');
