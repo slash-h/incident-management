@@ -10,23 +10,24 @@ build-parameters:
     - builder: custom
       commands:
         - npm ci
-        - npx cds build --production
+        - npx cds build --production  
 modules:
   - name: incident-management-srv
     type: nodejs
     path: gen/srv
     parameters:
-      instances: 1
       buildpack: nodejs_buildpack
+      readiness-health-check-type: http
+      readiness-health-check-http-endpoint: /health
     build-parameters:
-      builder: npm-ci
+      builder: npm
     provides:
       - name: srv-api # required by consumers of CAP services (e.g. approuter)
         properties:
           srv-url: ${default-url}
     requires:
-      - name: incident-management-auth
       - name: incident-management-db
+      - name: incident-management-auth
       - name: incident-management-destination
 
   - name: incident-management-db-deployer
@@ -96,22 +97,17 @@ modules:
               ServiceKeyName: incident-management-auth-key
               sap.cloud.service: incidentmanagement.service
 
-  - name: incident-management-app-deployer
-    type: com.sap.application.content
-    path: gen
-    requires:
-      - name: incident-management-html5-repo-host
-        parameters:
-          content-target: true
-    build-parameters:
-      build-result: app/
-      requires:
-        - name: incidentmanagementincidents
-          artifacts:
-            - incidents.zip
-          target-path: app/
-
 resources:
+  - name: incident-management-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: incident-management-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
   - name: incident-management-auth
     type: org.cloudfoundry.managed-service
     parameters:
@@ -121,11 +117,6 @@ resources:
       config:
         xsappname: incident-management-${org}-${space}
         tenant-mode: dedicated
-  - name: incident-management-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
   - name: incident-management-destination
     type: org.cloudfoundry.managed-service
     parameters:
@@ -137,7 +128,7 @@ resources:
           instance:
             existing_destinations_policy: update
             destinations:
-              - Name: srv-api
+              - Name: incident-management-srv-api
                 URL: ~{srv-api/srv-url}
                 Authentication: NoAuthentication
                 Type: HTTP
@@ -156,14 +147,3 @@ resources:
           name: srv-api # must be used in xs-app.json as well
           url: ~{srv-url}
           forwardAuthToken: true
-
-  - name: incident-management-html5-repo-host
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: html5-apps-repo
-      service-plan: app-host
-  - name: incident-management-html5-runtime
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: html5-apps-repo
-      service-plan: app-runtime
